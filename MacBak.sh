@@ -18,14 +18,13 @@ else
   echo "Starting backup to $BACKUP_SERVER"
   echo "`date \"+%d-%m-%y %H:%M\"` Starting backups" >> ./macbak.log
 
-  # Do something usefull with --stats!!
-  rsync --stats -a --progress /Users/wernergillmer/Documents -e "ssh -i $SSH_KEY" $USERNAME@$BACKUP_SERVER:$BACKUP_PATH
-  rsync --stats -a --progress /Users/wernergillmer/Code -e "ssh -i $SSH_KEY" $USERNAME@$BACKUP_SERVER:$BACKUP_PATH
-  rsync --stats -a --progress /Users/wernergillmer/Pictures -e "ssh -i $SSH_KEY" $USERNAME@$BACKUP_SERVER:$BACKUP_PATH
+   for FOLDER in ${BACKUP_LIST[@]}; do
+     #TODO : Do something usefull with --stats!! :)
+     rsync --stats -a --progress $FOLDER -e "ssh -i $SSH_KEY" $USERNAME@$BACKUP_SERVER:$BACKUP_PATH
+   done
 
   # Write log entry to verify later that the backups ran.
   echo "`date \"+%d-%m-%y %H:%M\"` Backups done" >> ./macbak.log
-
 
   # Show configued alert box.
   case $ALERT in
