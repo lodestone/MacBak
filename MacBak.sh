@@ -11,7 +11,7 @@ else
   exit
 fi
 
-AVAIL_CHECK=`nmap $BACKUP_SERVER -p 22 | awk '/open/ {print $2}'`
+AVAIL_CHECK=`nc -z $BACKUP_SERVER 22 | awk '/succeeded/ {print $7}'`
 if [ -z $AVAIL_CHECK ]; then
   echo "$BACKUP_SERVER is not availible"
 else
