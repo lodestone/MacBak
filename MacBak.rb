@@ -53,16 +53,26 @@ end
 
 def syncNow
 
-	backupSSH = "-e \"ssh -i #{@sshKey}\"" 
+	# Add -z for network compression 
+	rsyncOptions = "--progress --stats -a" 
+	backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
 
 	@backupList.each do |directory| 
 		case @backupType
 			when "backup"
-				backupCommand = "rsync --progress --stats -a --progress #{directory} #{backupSSH} #{@username}@#{@backupServer}:#{@backupPath}"
-				system backupCommand
+				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
+			#	puts backupCommand
+			#	pid = fork {  
+					system backupCommand
+			#		Kernel.trap('INT') {
+			#			Kernel.exit
+			#		}
+			#	}
+			#	Process.detach(pid)
 			when "sync"
-				backupCommand = "rsync --progress --backup --stats -a --progress #{directory} #{backupSSH} #{@username}@#{@backupServer}:#{directory}"
-				system backupCommand
+				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
+				puts backupCommand
+				#system backupCommand
 			else
 				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
 				Process.exit
@@ -74,8 +84,8 @@ end
 confCheck
 
 # Check if the backup server is available
-begin
-	Timeout::timeout(1) do
+#begin
+#	Timeout::timeout(5) do
 		begin
 			s = TCPSocket.new(@backupServer,'22')
 			# Check if we can successfully authenticate
@@ -92,10 +102,11 @@ begin
 		rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
 			alertMessage("MacBak ERROR : Cannot connect to #{@backupServer}")
 		end
-	end
-rescue Timeout::Error, Errno::ECONNREFUSED
-	alertMessage("MacBak ERROR : Connection timeout to #{@backupServer}")
-end
+#	end
+#rescue Timeout::Error, Errno::ECONNREFUSED
+#	alertMessage("MacBak ERROR : Connection timeout to #{@backupServer}")
+#	Process.exit
+#end
 
 # Get backup list and rsync it.
 #YAML array issues..sigh

@@ -5,7 +5,7 @@ BACKUP_SERVER: 10.0.0.15
 
 # Backup path on the server. Note this directory needs to
 # be on the server.
-BACKUP_PATH: /home/wernerg/backups/test
+BACKUP_PATH: /home/wernerg/backups/macbookpro
 
 # Specifies the backup type to be used. Be VERY carefull with
 # the sync option.
