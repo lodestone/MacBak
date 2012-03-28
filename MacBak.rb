@@ -18,6 +18,10 @@ def confCheck
 			@username = config['USERNAME']
 			@alert = config['ALERT']
 			@sshKey = config['SSH_KEY']
+			@backupType = config['BACKUP_TYPE']
+			@emailAddress = config['EMAIL_ADDRESS']
+			@backupPath = config['BACKUP_PATH']
+			@backupList = config['BACKUP_LIST']
 	else
 		confError = "ERROR : #{@confFile} was not found."
 		puts confError
@@ -46,6 +50,26 @@ def alertMessage(message)
 	end
 end
 
+
+def syncNow
+
+	backupSSH = "-e \"ssh -i #{@sshKey}\"" 
+
+	@backupList.each do |directory| 
+		case @backupType
+			when "backup"
+				backupCommand = "rsync --progress --stats -a --progress #{directory} #{backupSSH} #{@username}@#{@backupServer}:#{@backupPath}"
+				system backupCommand
+			when "sync"
+				backupCommand = "rsync --progress --backup --stats -a --progress #{directory} #{backupSSH} #{@username}@#{@backupServer}:#{directory}"
+				system backupCommand
+			else
+				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
+				Process.exit
+		end
+	end	
+end
+
 # Start of main 
 confCheck
 
@@ -59,6 +83,9 @@ begin
 				ssh =Net::SSH.start(
 						 @backupServer,@username,
 				     :keys => [@sshKey])
+       
+       			   syncNow 
+  
 			rescue Net::SSH::AuthenticationFailed, Errno::ECONNREFUSED
 				alertMessage("MacBak ERROR : Authentication failed for #{@username} againts #{@backupServer}")
 			end

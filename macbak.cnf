@@ -5,10 +5,26 @@ BACKUP_SERVER: 10.0.0.15
 
 # Backup path on the server. Note this directory needs to
 # be on the server.
-BACKUP_PATH: /home/wernerg/backups/macbookpro
+BACKUP_PATH: /home/wernerg/backups/test
+
+# Specifies the backup type to be used. Be VERY carefull with
+# the sync option.
+# Valid options :
+#  - backup   
+#  - sync
+#  backup option makes a backup to the backup server and never delete
+#  anything from the backup server. So if you delete a document on
+#  your mac and the backup ran previously the document will stay on the
+#  server. This should be the setting most users use.
+#  sync option will delete a file on the backup server if you delete
+#  it on your local machine. This is usefull if you want to keep
+#  your mac in sync with the another mac, that syncs of the same
+#  backup server. However if you loose data and MacBak runs after it, your
+#  data will be gone on the backup server as well.
+BACKUP_TYPE: backup 
 
 # Username for access to $BACKUP_SERVER
-USERNAME: iwernerg
+USERNAME: wernerg
 
 # SSH key to login to the backup server
 SSH_KEY: /Users/wernergillmer/.ssh/id_rsa
@@ -30,4 +46,8 @@ ALERT: email
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
+BACKUP_LIST:
+- /Users/wernergillmer/Documents
+- /Users/wernergillmer/Code
+- /Users/wernergillmer/Pictures
 
