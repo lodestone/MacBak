@@ -1,17 +1,20 @@
 ### Config file for MacBak
 
 # Server where your backups are going to
-BACKUP_SERVER="10.0.0.15"
+BACKUP_SERVER: 10.0.0.15
 
 # Backup path on the server. Note this directory needs to
 # be on the server.
-BACKUP_PATH="/home/wernerg/backups/macbookpro"
+BACKUP_PATH: /home/wernerg/backups/macbookpro
 
 # Username for access to $BACKUP_SERVER
-USERNAME="wernerg"
+USERNAME: iwernerg
 
 # SSH key to login to the backup server
-SSH_KEY="/Users/wernergillmer/.ssh/id_rsa"
+SSH_KEY: /Users/wernergillmer/.ssh/id_rsa
+
+# Address where alert email goes to
+EMAIL_ADDRESS: wernerg@afrigis.co.za
 
 # Shows "backup completed" alert in certain way.
 # Accepted values :
@@ -19,15 +22,12 @@ SSH_KEY="/Users/wernergillmer/.ssh/id_rsa"
 #          defaults to dialog.
 #  dialog - pops a dialog open on your screen.
 #  finder_dialog - makes our finder icon bounce, click on it gives dialog.
-#  Empty, just leave a blank space. No alert message get's send.
+#  email - send a email out to the addressed specified in EMAIL_ADDRESS
+#          after backup. 
+#  off - no messages get's send.
 #  The default is set to growl, it's by far the least annoying.
-ALERT="growl"
+ALERT: email 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
-BACKUP_LIST=(
-'/Users/wernergillmer/Documents'
-'/Users/wernergillmer/Pictures'
-'/Users/wernergillmer/Code'
-)
 

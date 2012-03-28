@@ -4,6 +4,9 @@
 # Schedule this script with cron/launchd if you want.
 # Coded by Werner Gillmer <werner.gillmer@gmail.com>
 
+# BUG : If you not in the . dir of MacBak.sh
+# it fails to find the conf file.
+# make this script an actuall Mac App?
 if [ -f ./macbak.conf ]; then
   source ./macbak.conf
 else
