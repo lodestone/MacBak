@@ -22,6 +22,16 @@ def confCheck
 			@emailAddress = config['EMAIL_ADDRESS']
 			@backupPath = config['BACKUP_PATH']
 			@backupList = config['BACKUP_LIST']
+
+			@backupList.each do |backup|
+				if Dir.exist?(backup)
+					return true
+				else
+					puts "ERROR: #{backup} does not exsist"
+					Process.exit
+				end
+			end
+
 	else
 		confError = "ERROR : #{@confFile} was not found."
 		puts confError
@@ -53,26 +63,19 @@ end
 
 def syncNow
 
-	# Add -z for network compression 
-	rsyncOptions = "--progress --stats -a" 
+	rsyncOptions = "-z --progress --stats -a" 
 	backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
 
 	@backupList.each do |directory| 
 		case @backupType
 			when "backup"
 				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-			#	puts backupCommand
-			#	pid = fork {  
 					system backupCommand
-			#		Kernel.trap('INT') {
-			#			Kernel.exit
-			#		}
-			#	}
-			#	Process.detach(pid)
 			when "sync"
-				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
-				puts backupCommand
-				#system backupCommand
+			  dirname, basename = File.split(directory)
+				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{dirname}"
+				#puts backupCommand
+				system backupCommand
 			else
 				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
 				Process.exit
@@ -84,8 +87,6 @@ end
 confCheck
 
 # Check if the backup server is available
-#begin
-#	Timeout::timeout(5) do
 		begin
 			s = TCPSocket.new(@backupServer,'22')
 			# Check if we can successfully authenticate
@@ -102,14 +103,6 @@ confCheck
 		rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
 			alertMessage("MacBak ERROR : Cannot connect to #{@backupServer}")
 		end
-#	end
-#rescue Timeout::Error, Errno::ECONNREFUSED
-#	alertMessage("MacBak ERROR : Connection timeout to #{@backupServer}")
-#	Process.exit
-#end
-
-# Get backup list and rsync it.
-#YAML array issues..sigh
 
 
 
