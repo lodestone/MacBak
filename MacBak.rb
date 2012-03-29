@@ -61,14 +61,10 @@ def syncNow
 		case @backupType
 			when "backup"
 				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-			#	puts backupCommand
-			#	pid = fork {  
+				pid = fork {  
 					system backupCommand
-			#		Kernel.trap('INT') {
-			#			Kernel.exit
-			#		}
-			#	}
-			#	Process.detach(pid)
+				}
+			 Process.detach(pid)
 			when "sync"
 				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
 				puts backupCommand
