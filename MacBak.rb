@@ -74,7 +74,6 @@ def syncNow
 			when "sync"
 			  dirname, basename = File.split(directory)
 				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{dirname}"
-				#puts backupCommand
 				system backupCommand
 			else
 				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
@@ -87,22 +86,24 @@ end
 confCheck
 
 # Check if the backup server is available
-		begin
-			s = TCPSocket.new(@backupServer,'22')
-			# Check if we can successfully authenticate
-			begin
-				ssh =Net::SSH.start(
-						 @backupServer,@username,
-				     :keys => [@sshKey])
-       
-       			   syncNow 
+begin
+	s = TCPSocket.new(@backupServer,'22')
+	# Check if we can successfully authenticate
+	begin
+		ssh =Net::SSH.start(
+				 @backupServer,@username,
+		     :keys => [@sshKey])
+     
+   			   syncNow 
   
-			rescue Net::SSH::AuthenticationFailed, Errno::ECONNREFUSED
-				alertMessage("MacBak ERROR : Authentication failed for #{@username} againts #{@backupServer}")
-			end
-		rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
-			alertMessage("MacBak ERROR : Cannot connect to #{@backupServer}")
-		end
+	rescue Net::SSH::AuthenticationFailed, Errno::ECONNREFUSED
+		alertMessage("MacBak ERROR : Authentication failed for #{@username} againts #{@backupServer}")
+		Process.exit
+	end
+rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
+	alertMessage("MacBak ERROR : Cannot connect to #{@backupServer}")
+	Process.exit
+end
 
 
 
