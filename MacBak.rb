@@ -66,6 +66,8 @@ def syncNow
 				}
 			 Process.detach(pid)
 			when "sync"
+				#### Think of adding a git command in here, as a safe guard in case something
+				# got deleted that should not have been
 				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
 				puts backupCommand
 				#system backupCommand
