@@ -54,7 +54,7 @@ end
 def syncNow
 
 	# Add -z for network compression 
-	rsyncOptions = "--progress --stats -a" 
+	rsyncOptions = "-z --progress --stats -a" 
 	backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
 
 	@backupList.each do |directory| 

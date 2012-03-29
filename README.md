@@ -13,12 +13,13 @@ own backup utility that uses rsync to make backups to a remote server.
 Usage
 -----
 
-* Run it manually ./MacBak.sh from the command line
+* Run it manually ./MacBak.rb from the command line
 * Create a Launchd plist file (check repo for example)
 * Schedule it in cron
 
 NOTE : Apart from the alerts, it should work perfectly on Linux as well,
-just make ALERT blank in the conf file.
+just make ALERT off in the conf file. Infact I use MacBak to keep certain
+directories on Ubuntu Linux servers in sync.
 
 Todo
 ----
