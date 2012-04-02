@@ -26,7 +26,7 @@ def confCheck
 	else
 		confError = "ERROR : #{@confFile} was not found."
 		puts confError
-		puts "#{confError}"
+		system "nohup osascript -e 'tell app \"System Events\" to display dialog \"#{confError}\"' &"
 		Process.exit
 	end
 end

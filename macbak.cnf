@@ -4,8 +4,7 @@
 BACKUP_SERVER: 10.0.0.15
 
 # Backup path on the server. Note this directory needs to
-# be on the server. If you use sync as BACKUP_TYPE, you can
-# ignore this setting.
+# be on the server.
 BACKUP_PATH: /home/wernerg/backups/macbookpro
 
 # Specifies the backup type to be used. Be VERY carefull with
@@ -22,10 +21,7 @@ BACKUP_PATH: /home/wernerg/backups/macbookpro
 #  your mac in sync with the another mac, that syncs of the same
 #  backup server. However if you loose data and MacBak runs after it, your
 #  data will be gone on the backup server as well.
-#
-#  NOTE if you use sync and you want to sync say /Users/wernergillmer/test
-#  then on the backup server /Users/wernergillmer needs to exsist
-BACKUP_TYPE: sync 
+BACKUP_TYPE: backup 
 
 # Username for access to $BACKUP_SERVER
 USERNAME: wernerg

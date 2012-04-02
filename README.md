@@ -10,21 +10,6 @@ severly crippled network backup functionality, where it's unable(without
 some hacks) to backup to a non-Apple server over a network, I wrote my
 own backup utility that uses rsync to make backups to a remote server.
 
-Functionality
--------------
-
-Two backup modes.
-
-* backup
-* sync
-
-Most users should use the "backup" mode. No deletes happens on the backup
-server, so say you have a document and you accidently deleted it, it will still
-be on the backup server. Sync on the other hand will remove a file from the backup
-server if it get's removed locally as well. Sync is usefull if you want to 
-keep two Mac's in sync. For example you want the exact same Documents folder
-on your Macbook and iMac. Usefull to keep two Linux servers in sync as well :)
-
 Usage
 -----
 
