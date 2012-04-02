@@ -7,6 +7,8 @@ require 'socket'
 require 'timeout'
 require 'net/ssh'
 require 'ruby-growl'
+require 'benchmark'
+require 'ssh_test'
 
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 
@@ -61,10 +63,11 @@ def syncNow
 		case @backupType
 			when "backup"
 				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-				pid = fork {  
-					system backupCommand
-				}
-			 Process.detach(pid)
+		#		pid = fork {  
+				#	system backupCommand
+					puts backupCommand
+		#		}
+		#	 Process.detach(pid)
 			when "sync"
 				#### Think of adding a git command in here, as a safe guard in case something
 				# got deleted that should not have been
@@ -82,35 +85,12 @@ end
 confCheck
 
 # Check if the backup server is available
-#begin
-#	Timeout::timeout(5) do
-		begin
-			s = TCPSocket.new(@backupServer,'22')
-			# Check if we can successfully authenticate
-			begin
-				ssh =Net::SSH.start(
-						 @backupServer,@username,
-				     :keys => [@sshKey])
-       
-       			   syncNow 
-  
-			rescue Net::SSH::AuthenticationFailed, Errno::ECONNREFUSED
-				alertMessage("MacBak ERROR : Authentication failed for #{@username} againts #{@backupServer}")
-			end
-		rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
-			alertMessage("MacBak ERROR : Cannot connect to #{@backupServer}")
-		end
-#	end
-#rescue Timeout::Error, Errno::ECONNREFUSED
-#	alertMessage("MacBak ERROR : Connection timeout to #{@backupServer}")
-#	Process.exit
-#end
 
-# Get backup list and rsync it.
-#YAML array issues..sigh
-
-
-
-
-
+ssh = SSHTest.new
+if ssh.test(@backupServer,@username,@sshKey) == false
+	alertMessage( "ERROR : ssh failed")
+	Process.exit
+else
+	syncNow
+end	
 

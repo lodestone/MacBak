@@ -1,7 +1,7 @@
 ### Config file for MacBak
 
 # Server where your backups are going to
-BACKUP_SERVER: 10.0.0.15
+BACKUP_SERVER: 11.0.0.15
 
 # Backup path on the server. Note this directory needs to
 # be on the server.
