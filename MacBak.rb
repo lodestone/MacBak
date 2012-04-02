@@ -7,7 +7,6 @@ require 'socket'
 require 'timeout'
 require 'net/ssh'
 require 'ruby-growl'
-require 'benchmark'
 require 'ssh_test'
 
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
@@ -63,17 +62,12 @@ def syncNow
 		case @backupType
 			when "backup"
 				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-		#		pid = fork {  
-				#	system backupCommand
-					puts backupCommand
-		#		}
-		#	 Process.detach(pid)
+				system backupCommand
 			when "sync"
 				#### Think of adding a git command in here, as a safe guard in case something
 				# got deleted that should not have been
 				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
-				puts backupCommand
-				#system backupCommand
+				system backupCommand
 			else
 				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
 				Process.exit
@@ -85,7 +79,6 @@ end
 confCheck
 
 # Check if the backup server is available
-
 ssh = SSHTest.new
 if ssh.test(@backupServer,@username,@sshKey) == false
 	alertMessage( "ERROR : ssh failed")
