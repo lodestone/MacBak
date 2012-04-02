@@ -51,8 +51,7 @@ ALERT: email
 # List of local directories that you want to backup.
 # Add a entry like the example one.
 BACKUP_LIST:
-#- /Users/wernergillmer/Documents
-#- /Users/wernergillmer/Code
-#- /Users/wernergillmer/Pictures
-- /tmp/backup/test
+- /Users/wernergillmer/Documents
+- /Users/wernergillmer/Code
+- /Users/wernergillmer/Pictures
 

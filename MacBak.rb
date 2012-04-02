@@ -7,6 +7,7 @@ require 'socket'
 require 'timeout'
 require 'net/ssh'
 require 'ruby-growl'
+require 'ssh_test'
 
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 
@@ -22,16 +23,6 @@ def confCheck
 			@emailAddress = config['EMAIL_ADDRESS']
 			@backupPath = config['BACKUP_PATH']
 			@backupList = config['BACKUP_LIST']
-
-			@backupList.each do |backup|
-				if Dir.exist?(backup)
-					return true
-				else
-					puts "ERROR: #{backup} does not exsist"
-					Process.exit
-				end
-			end
-
 	else
 		confError = "ERROR : #{@confFile} was not found."
 		puts confError
@@ -63,6 +54,7 @@ end
 
 def syncNow
 
+	# Add -z for network compression 
 	rsyncOptions = "-z --progress --stats -a" 
 	backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
 
@@ -70,10 +62,11 @@ def syncNow
 		case @backupType
 			when "backup"
 				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-					system backupCommand
+				system backupCommand
 			when "sync"
-			  dirname, basename = File.split(directory)
-				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{dirname}"
+				#### Think of adding a git command in here, as a safe guard in case something
+				# got deleted that should not have been
+				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
 				system backupCommand
 			else
 				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
@@ -86,27 +79,11 @@ end
 confCheck
 
 # Check if the backup server is available
-begin
-	s = TCPSocket.new(@backupServer,'22')
-	# Check if we can successfully authenticate
-	begin
-		ssh =Net::SSH.start(
-				 @backupServer,@username,
-		     :keys => [@sshKey])
-     
-   			   syncNow 
-  
-	rescue Net::SSH::AuthenticationFailed, Errno::ECONNREFUSED
-		alertMessage("MacBak ERROR : Authentication failed for #{@username} againts #{@backupServer}")
-		Process.exit
-	end
-rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
-	alertMessage("MacBak ERROR : Cannot connect to #{@backupServer}")
+ssh = SSHTest.new
+if ssh.test(@backupServer,@username,@sshKey) == false
+	alertMessage( "ERROR : ssh failed")
 	Process.exit
-end
-
-
-
-
-
+else
+	syncNow
+end	
 
