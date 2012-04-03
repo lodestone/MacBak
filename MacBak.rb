@@ -64,9 +64,10 @@ def syncNow
 				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
 				system backupCommand
 			when "sync"
+				dirname, basename = File.split(directory)
 				#### Think of adding a git command in here, as a safe guard in case something
 				# got deleted that should not have been
-				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{directory}"
+				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{dirname}"
 				system backupCommand
 			else
 				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
