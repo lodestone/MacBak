@@ -35,12 +35,12 @@ def alertMessage(message)
     	g = Growl.new "localhost", "ruby-growl",
     		              ["ruby-growl Notification"]
     	g.notify "ruby-growl Notification", "MacBak",
-    		         "Backup done"
+    		         "#{message}"
 		when "email"
       Pony.mail(:to => @emailAddress,
       					:from => 'macbak@yourmacorpc.fake',
       					:subject => 'MacBak',
-      					:body => 'Backup done.')	
+      					:body => "#{message} \n")	
 		when "off"
 			puts "OFF: #{message}"
 	end
@@ -59,7 +59,11 @@ def syncNow
 	  	'progress' => true
     	)
 			backup.rsync(directory,@backupPath)
-			alertMessage("Backup done")
+			# If alert is email, a mail goes out for every
+			# directory getting backed up. Might be too much
+			# spam. Move this alertMessage out of the syncNow 
+			# function?
+			alertMessage("#{directory} backup done")
 	  end	
 end
 

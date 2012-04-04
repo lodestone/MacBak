@@ -11,13 +11,15 @@ own backup utility that uses rsync to make backups to a remote server.
 
 ### Usage
 
+Open up macback.cnf and edit the file according to your needs.
+
 * Run it manually ./MacBak.rb from the command line
 * Create a Launchd plist file (check repo for example)
 * Schedule it in cron
 
 NOTE : Apart from the alerts, it should work perfectly on Linux as well,
-just make ALERT off in the conf file. Infact I use MacBak to keep certain
-directories on Ubuntu Linux servers in sync.
+alerting will work if it's not set to growl. Infact I use MacBak to keep certain
+directories on Ubuntu Linux servers in sync with the clone function.
 
 ### Requirements
 
@@ -29,7 +31,7 @@ Everything can be installed with gem
 * ssh_test
 * rsync_wrap
 
-To get Growl notifications working, make sure that
+To get Growl notifications working on your Mac, make sure that
 "Listen for incoming notifications" and "Allow remote application registration"
 for growl in your System Preferences is checked.
 

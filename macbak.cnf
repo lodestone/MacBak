@@ -35,7 +35,7 @@ USERNAME: wernerg
 SSH_KEY: /Users/wernergillmer/.ssh/id_rsa
 
 # Address where alert email goes to
-EMAIL_ADDRESS: werner.gillmer@gmail.com 
+EMAIL_ADDRESS: wernerg@afrigis.co.za
 
 # Shows "backup completed" alert in certain way.
 # Accepted values :
