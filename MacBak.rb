@@ -8,27 +8,6 @@ require 'ssh_test'
 require 'rsync_wrap'
 require 'pony'
 
-
-def confCheck
-
-	
-  @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
-	if File.exist?("#{@confFile}")
-		config = YAML::load(File.open(@confFile))
-			@backupServer = config['BACKUP_SERVER']
-			@username = config['USERNAME']
-			@alert = config['ALERT']
-			@sshKey = config['SSH_KEY']
-			@backupType = config['BACKUP_TYPE']
-			@emailAddress = config['EMAIL_ADDRESS']
-			@backupPath = config['BACKUP_PATH']
-			@backupList = config['BACKUP_LIST']
-	else
-		puts "ERROR : #{@confFile} was not found."
-		Process.exit
-	end
-end
-
 # Sends alert message based on ALERT configured in confFile
 def alertMessage(message)
 	case @alert
