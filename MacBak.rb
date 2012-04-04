@@ -3,11 +3,9 @@
 # Coded by Werner Gillmer <werner.gillmer@gmail.com>
 
 require 'yaml'
-require 'socket'
-require 'timeout'
-require 'net/ssh'
 require 'ruby-growl'
 require 'ssh_test'
+require 'rsync_wrap'
 
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 
@@ -24,9 +22,7 @@ def confCheck
 			@backupPath = config['BACKUP_PATH']
 			@backupList = config['BACKUP_LIST']
 	else
-		confError = "ERROR : #{@confFile} was not found."
-		puts confError
-		system "nohup osascript -e 'tell app \"System Events\" to display dialog \"#{confError}\"' &"
+		puts "ERROR : #{@confFile} was not found."
 		Process.exit
 	end
 end
@@ -52,28 +48,19 @@ def alertMessage(message)
 end
 
 
+# Does the rsync work
 def syncNow
-
-	# Add -z for network compression 
-	rsyncOptions = "-z --progress --stats -a" 
-	backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
-
-	@backupList.each do |directory| 
-		case @backupType
-			when "backup"
-				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-				system backupCommand
-			when "sync"
-				dirname, basename = File.split(directory)
-				#### Think of adding a git command in here, as a safe guard in case something
-				# got deleted that should not have been
-				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{dirname}"
-				system backupCommand
-			else
-				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
-				Process.exit
-		end
-	end	
+	@backupList.each do |directory|
+    backup = RsyncWrap.new(
+	  	'transport' => 'ssh',
+	  	'backup' => @backupType,
+	  	'username' => @username,
+	  	'keyfile' => @sshKey, 
+	  	'server' => @backupServer,
+	  	'progress' => true
+    	)
+			backup.rsync(directory,@backupPath)
+	  end	
 end
 
 # Start of main 
@@ -85,6 +72,6 @@ if ssh.test(@backupServer,@username,@sshKey) == false
 	alertMessage( "ERROR : ssh failed")
 	Process.exit
 else
-	syncNow
+  syncNow	
 end	
 

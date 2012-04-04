@@ -12,6 +12,7 @@ BACKUP_PATH: /home/wernerg/backups/macbookpro
 # Valid options :
 #  - backup   
 #  - sync
+#  - clone
 #  backup option makes a backup to the backup server and never delete
 #  anything from the backup server. So if you delete a document on
 #  your mac and the backup ran previously the document will stay on the
@@ -20,8 +21,12 @@ BACKUP_PATH: /home/wernerg/backups/macbookpro
 #  it on your local machine. This is usefull if you want to keep
 #  your mac in sync with the another mac, that syncs of the same
 #  backup server. However if you loose data and MacBak runs after it, your
-#  data will be gone on the backup server as well.
-BACKUP_TYPE: sync 
+#  data will be gone on the backup server as well. The sync option replicates
+#  to the BACKUP_PATH specified on the server. The clone option is exactly
+#  the same as sync, however it will clone to the exact same dir on the server
+#  as the local directory path. So a clone of /Users/werner/documents will go
+#  to /Users/werner/documents on the backup server.
+BACKUP_TYPE: backup 
 
 # Username for access to $BACKUP_SERVER
 USERNAME: wernerg
