@@ -8,10 +8,11 @@ require 'ssh_test'
 require 'rsync_wrap'
 require 'pony'
 
-@confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 
-# Testing for conf file
 def confCheck
+
+	
+  @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 	if File.exist?("#{@confFile}")
 		config = YAML::load(File.open(@confFile))
 			@backupServer = config['BACKUP_SERVER']
@@ -64,11 +65,39 @@ def syncNow
 			# spam. Move this alertMessage out of the syncNow 
 			# function?
 			alertMessage("#{directory} backup done")
-	  end	
+	 end	
 end
 
-# Start of main 
-confCheck
+### Start of main
+# Check for run file. The run file get's used to
+# stop MacBak from starting if another instance is
+# still running
+@runFile = '/tmp/.macbak.run'
+if File.exist?(@runFile)
+    puts "Another instance of MacBak is already running"
+		Process.exit
+	else
+		# Create a new file and continue running
+		File.open(@runFile,"w") {}
+		#`touch #{@runFile}`
+	end
+
+# Check for configuration file
+@confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
+	if File.exist?("#{@confFile}")
+		config = YAML::load(File.open(@confFile))
+			@backupServer = config['BACKUP_SERVER']
+			@username = config['USERNAME']
+			@alert = config['ALERT']
+			@sshKey = config['SSH_KEY']
+			@backupType = config['BACKUP_TYPE']
+			@emailAddress = config['EMAIL_ADDRESS']
+			@backupPath = config['BACKUP_PATH']
+			@backupList = config['BACKUP_LIST']
+	else
+		puts "ERROR : #{@confFile} was not found."
+		Process.exit
+	end
 
 # Check if the backup server is available
 ssh = SSHTest.new
@@ -76,6 +105,10 @@ if ssh.test(@backupServer,@username,@sshKey) == false
 	alertMessage( "ERROR : ssh failed")
 	Process.exit
 else
-  syncNow	
+	# Everything tested 100% do the backups now
+  syncNow
+  # remove the run file now, so that MacBak will
+  # run on the next execute.
+	File.delete(@runFile) 
 end	
 
