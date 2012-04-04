@@ -24,6 +24,7 @@ directories on Ubuntu Linux servers in sync.
 Everything can be installed with gem
 * yaml
 * ruby-growl
+* pony 
 * ssh_test
 * rsync_wrap
 

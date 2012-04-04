@@ -35,7 +35,7 @@ USERNAME: wernerg
 SSH_KEY: /Users/wernergillmer/.ssh/id_rsa
 
 # Address where alert email goes to
-EMAIL_ADDRESS: wernerg@afrigis.co.za
+EMAIL_ADDRESS: werner.gillmer@gmail.com 
 
 # Shows "backup completed" alert in certain way.
 # Accepted values :
@@ -49,7 +49,7 @@ ALERT: email
 # List of local directories that you want to backup.
 # Add a entry like the example one.
 BACKUP_LIST:
-#- /Users/wernergillmer/Documents
+- /Users/wernergillmer/Documents
 - /Users/wernergillmer/Code
-#- /Users/wernergillmer/Pictures
+- /Users/wernergillmer/Pictures
 
