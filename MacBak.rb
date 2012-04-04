@@ -31,15 +31,10 @@ end
 def alertMessage(message)
 	case @alert
 		when "growl"
-    	puts "Growl ========== : #{message}"
     	g = Growl.new "localhost", "ruby-growl",
     		              ["ruby-growl Notification"]
-    	g.notify "ruby-growl Notification", "It Came From Ruby-Growl",
-    		         "Greetings!"
-		when "dialog"
-			system "nohup osascript -e 'tell app \"System Events\" to display dialog \"#{message}\"' &"
-		when "finder_dialog"
-			system "nohup osascript -e 'tell app \"Finder\" to display dialog \"#{message}\"' &"
+    	g.notify "ruby-growl Notification", "MacBak",
+    		         "Backup done"
 		when "email"
 			puts "EMAIL : #{message}"
 		when "off"

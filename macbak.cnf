@@ -41,13 +41,11 @@ EMAIL_ADDRESS: wernerg@afrigis.co.za
 # Accepted values :
 #  growl - Shows a growl popup. If growl is not found it
 #          defaults to dialog.
-#  dialog - pops a dialog open on your screen.
-#  finder_dialog - makes our finder icon bounce, click on it gives dialog.
 #  email - send a email out to the addressed specified in EMAIL_ADDRESS
 #          after backup. 
 #  off - no messages get's send.
 #  The default is set to growl, it's by far the least annoying.
-ALERT: growl 
+ALERT: off 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
