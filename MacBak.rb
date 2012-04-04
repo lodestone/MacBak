@@ -3,9 +3,6 @@
 # Coded by Werner Gillmer <werner.gillmer@gmail.com>
 
 require 'yaml'
-require 'socket'
-require 'timeout'
-require 'net/ssh'
 require 'ruby-growl'
 require 'ssh_test'
 require 'rsync_wrap'
@@ -53,18 +50,17 @@ end
 
 # Does the rsync work
 def syncNow
-
-  backup = RsyncWrap.new(
-		'transport' => 'ssh',
-		'backup' => @backupType,
-		'username' => @username,
-		'keyfile' => @sshKey, 
-		'server' => @backupServer
-  	)
-
-	@backupList.each do |directory| 
+	@backupList.each do |directory|
+    backup = RsyncWrap.new(
+	  	'transport' => 'ssh',
+	  	'backup' => @backupType,
+	  	'username' => @username,
+	  	'keyfile' => @sshKey, 
+	  	'server' => @backupServer,
+	  	'progress' => true
+    	)
 			backup.rsync(directory,@backupPath)
-	end	
+	  end	
 end
 
 # Start of main 
