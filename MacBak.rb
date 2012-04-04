@@ -7,13 +7,13 @@ require 'ruby-growl'
 require 'ssh_test'
 require 'rsync_wrap'
 require 'pony'
+require 'find'
 
 # Sends alert message based on ALERT configured in confFile
 def alertMessage(message)
 	case @alert
 		when "growl"
-    	g = Growl.new "localhost", "ruby-growl",
-    		              ["ruby-growl Notification"]
+    	g = Growl.new "localhost", "ruby-growl", ["ruby-growl Notification"]
     	g.notify "ruby-growl Notification", "MacBak",
     		         "#{message}"
 		when "email"
@@ -65,10 +65,16 @@ end
 			# Passing size gives the size of your dirs you
 			# want to backup back and then exit
       if ARGV[0] == 'size'
-      	@backupList.each do |dirSize|
-	  	    dir = File.size(dirSize)
-	   	    puts "#{dirSize} is #{dir}"
+      	puts "Calculating..."
+      	@backupList.each do |dir|
+      		# Security issue? It's possible to make one of
+      		# the dirs in BACKUP_LIST in the conf file
+      		# a command like "; rm -Rf /" and that will get parsed
+      		# into the dir varible here.
+      		dirSize = `du -hs #{dir}`
+					puts "#{dirSize}"
 				end  
+				puts "done"
 	     	Process.exit
       end
 	else

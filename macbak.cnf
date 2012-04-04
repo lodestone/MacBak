@@ -44,7 +44,7 @@ EMAIL_ADDRESS: wernerg@afrigis.co.za
 #  email - send a email out to the addressed specified in EMAIL_ADDRESS
 #          after backup.  
 #  off - no messages get's send.
-ALERT: email 
+ALERT: growl 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
