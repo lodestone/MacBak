@@ -31,7 +31,7 @@ end
 def alertMessage(message)
 	case @alert
 		when "growl"
-    	puts "Growl : #{message}"
+    	puts "Growl ========== : #{message}"
     	g = Growl.new "localhost", "ruby-growl",
     		              ["ruby-growl Notification"]
     	g.notify "ruby-growl Notification", "It Came From Ruby-Growl",
@@ -60,6 +60,7 @@ def syncNow
 	  	'progress' => true
     	)
 			backup.rsync(directory,@backupPath)
+			alertMessage("Backup done")
 	  end	
 end
 

@@ -27,10 +27,13 @@ Everything can be installed with gem
 * ssh_test
 * rsync_wrap
 
+To get Growl notifications working, make sure that
+"Listen for incoming notifications" and "Allow remote application registration"
+for growl in your System Preferences is checked.
+
 ### Todo
 
 For my needs the script works great and I depend on it daily, however
 it would be nice to have a easier...almost more Mac friendly way of
 adding the folders you want to backup and do the scheduling.
 
-The alerting does not really work at the moment.

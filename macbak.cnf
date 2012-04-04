@@ -47,12 +47,12 @@ EMAIL_ADDRESS: wernerg@afrigis.co.za
 #          after backup. 
 #  off - no messages get's send.
 #  The default is set to growl, it's by far the least annoying.
-ALERT: email 
+ALERT: growl 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
 BACKUP_LIST:
-- /Users/wernergillmer/Documents
+#- /Users/wernergillmer/Documents
 - /Users/wernergillmer/Code
-- /Users/wernergillmer/Pictures
+#- /Users/wernergillmer/Pictures
 
