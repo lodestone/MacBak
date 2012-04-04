@@ -25,9 +25,7 @@ def confCheck
 			@backupPath = config['BACKUP_PATH']
 			@backupList = config['BACKUP_LIST']
 	else
-		confError = "ERROR : #{@confFile} was not found."
-		puts confError
-		system "nohup osascript -e 'tell app \"System Events\" to display dialog \"#{confError}\"' &"
+		puts "ERROR : #{@confFile} was not found."
 		Process.exit
 	end
 end
@@ -64,16 +62,8 @@ def syncNow
 		'server' => @backupServer
   	)
 
-	# Add -z for network compression 
-	#rsyncOptions = "-z --progress --stats -a" 
-	#backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
-
 	@backupList.each do |directory| 
 			backup.rsync(directory,@backupPath)
-		 # puts "#{@backupType} run : #{directory},#{@backupPath}"
-				#dirname, basename = File.split(directory)
-				#### Think of adding a git command in here, as a safe guard in case something
-				# got deleted that should not have been
 	end	
 end
 
