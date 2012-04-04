@@ -21,7 +21,7 @@ BACKUP_PATH: /home/wernerg/backups/macbookpro
 #  your mac in sync with the another mac, that syncs of the same
 #  backup server. However if you loose data and MacBak runs after it, your
 #  data will be gone on the backup server as well.
-BACKUP_TYPE: sync 
+BACKUP_TYPE: clone 
 
 # Username for access to $BACKUP_SERVER
 USERNAME: wernerg
@@ -47,7 +47,7 @@ ALERT: email
 # List of local directories that you want to backup.
 # Add a entry like the example one.
 BACKUP_LIST:
-- /Users/wernergillmer/Documents
+#- /Users/wernergillmer/Documents
 - /Users/wernergillmer/Code
-- /Users/wernergillmer/Pictures
+#- /Users/wernergillmer/Pictures
 

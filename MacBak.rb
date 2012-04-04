@@ -8,6 +8,7 @@ require 'timeout'
 require 'net/ssh'
 require 'ruby-growl'
 require 'ssh_test'
+require 'rsync_wrap'
 
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 
@@ -52,27 +53,27 @@ def alertMessage(message)
 end
 
 
+# Does the rsync work
 def syncNow
 
+  backup = RsyncWrap.new(
+		'transport' => 'ssh',
+		'backup' => @backupType,
+		'username' => @username,
+		'keyfile' => @sshKey, 
+		'server' => @backupServer
+  	)
+
 	# Add -z for network compression 
-	rsyncOptions = "-z --progress --stats -a" 
-	backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
+	#rsyncOptions = "-z --progress --stats -a" 
+	#backupSSH = "-e \"ssh -i #{@sshKey}\" #{@username}@#{@backupServer}" 
 
 	@backupList.each do |directory| 
-		case @backupType
-			when "backup"
-				backupCommand = "rsync #{rsyncOptions} #{directory} #{backupSSH}:#{@backupPath}"
-				system backupCommand
-			when "sync"
-				dirname, basename = File.split(directory)
+			backup.rsync(directory,@backupPath)
+		 # puts "#{@backupType} run : #{directory},#{@backupPath}"
+				#dirname, basename = File.split(directory)
 				#### Think of adding a git command in here, as a safe guard in case something
 				# got deleted that should not have been
-				backupCommand = "rsync #{rsyncOptions} --delete #{directory} #{backupSSH}:#{dirname}"
-				system backupCommand
-			else
-				alertMessage("Unkown value for BACKUP_TYPE in #{@confFile}")
-				Process.exit
-		end
 	end	
 end
 
@@ -85,6 +86,6 @@ if ssh.test(@backupServer,@username,@sshKey) == false
 	alertMessage( "ERROR : ssh failed")
 	Process.exit
 else
-	syncNow
+  syncNow	
 end	
 
