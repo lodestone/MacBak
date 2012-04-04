@@ -42,10 +42,9 @@ EMAIL_ADDRESS: wernerg@afrigis.co.za
 #  growl - Shows a growl popup. If growl is not found it
 #          defaults to dialog.
 #  email - send a email out to the addressed specified in EMAIL_ADDRESS
-#          after backup. 
+#          after backup.  
 #  off - no messages get's send.
-#  The default is set to growl, it's by far the least annoying.
-ALERT: off 
+ALERT: email 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.

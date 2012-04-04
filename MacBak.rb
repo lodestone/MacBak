@@ -6,6 +6,7 @@ require 'yaml'
 require 'ruby-growl'
 require 'ssh_test'
 require 'rsync_wrap'
+require 'pony'
 
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 
@@ -36,7 +37,10 @@ def alertMessage(message)
     	g.notify "ruby-growl Notification", "MacBak",
     		         "Backup done"
 		when "email"
-			puts "EMAIL : #{message}"
+      Pony.mail(:to => @emailAddress,
+      					:from => 'macbak@yourmacorpc.fake',
+      					:subject => 'MacBak',
+      					:body => 'Backup done.')	
 		when "off"
 			puts "OFF: #{message}"
 	end
