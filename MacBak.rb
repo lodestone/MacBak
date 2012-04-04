@@ -48,19 +48,6 @@ def syncNow
 end
 
 ### Start of main
-# Check for run file. The run file get's used to
-# stop MacBak from starting if another instance is
-# still running
-@runFile = '/tmp/.macbak.run'
-if File.exist?(@runFile)
-    puts "Another instance of MacBak is already running"
-		Process.exit
-	else
-		# Create a new file and continue running
-		File.open(@runFile,"w") {}
-		#`touch #{@runFile}`
-	end
-
 # Check for configuration file
 @confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
 	if File.exist?("#{@confFile}")
@@ -73,6 +60,17 @@ if File.exist?(@runFile)
 			@emailAddress = config['EMAIL_ADDRESS']
 			@backupPath = config['BACKUP_PATH']
 			@backupList = config['BACKUP_LIST']
+
+			# Handle "size" command line argument.
+			# Passing size gives the size of your dirs you
+			# want to backup back and then exit
+      if ARGV[0] == 'size'
+      	@backupList.each do |dirSize|
+	  	    dir = File.size(dirSize)
+	   	    puts "#{dirSize} is #{dir}"
+				end  
+	     	Process.exit
+      end
 	else
 		puts "ERROR : #{@confFile} was not found."
 		Process.exit
@@ -84,6 +82,18 @@ if ssh.test(@backupServer,@username,@sshKey) == false
 	alertMessage( "ERROR : ssh failed")
 	Process.exit
 else
+  # Check for run file. The run file get's used to
+  # stop MacBak from starting if another instance is
+  # still running
+  @runFile = '/tmp/.macbak.run'
+  if File.exist?(@runFile)
+    puts "Another instance of MacBak is already running"
+		Process.exit
+	else
+		# Create a new file and continue running
+		File.open(@runFile,"w") {}
+	end
+
 	# Everything tested 100% do the backups now
   syncNow
   # remove the run file now, so that MacBak will
