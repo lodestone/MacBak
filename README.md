@@ -22,6 +22,7 @@ directories on Ubuntu Linux servers in sync.
 ### Requirements
 
 Everything can be installed with gem
+
 * yaml
 * ruby-growl
 * pony 
