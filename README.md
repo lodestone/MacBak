@@ -17,6 +17,12 @@ Open up macback.cnf and edit the file according to your needs.
 * Create a Launchd plist file (check repo for example)
 * Schedule it in cron
 
+If you run
+```
+MacBak.rb size
+```
+you will get a list of the sizes for the directories your backing up.
+
 NOTE : Apart from the alerts, it should work perfectly on Linux as well,
 alerting will work if it's not set to growl. Infact I use MacBak to keep certain
 directories on Ubuntu Linux servers in sync with the clone function.
