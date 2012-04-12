@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Ruby version of Macbak.sh
 # Coded by Werner Gillmer <werner.gillmer@gmail.com>
+# v0.0.1
 
 require 'yaml'
 require 'ruby-growl'
@@ -8,6 +9,7 @@ require 'ssh_test'
 require 'rsync_wrap'
 require 'pony'
 require 'find'
+require 'daemons'
 
 # Sends alert message based on ALERT configured in confFile
 def alertMessage(message)

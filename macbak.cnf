@@ -1,5 +1,8 @@
 ### Config file for MacBak
 
+# TODO : Add functionality here for local or 127.0.0.1
+# in which case it will do a backup to the BACKUP_PATH on your
+# local machine...say to a external drive.
 # Server where your backups are going to
 BACKUP_SERVER: 10.0.0.15
 
