@@ -9,7 +9,7 @@ require 'ssh_test'
 require 'rsync_wrap'
 require 'pony'
 require 'find'
-require 'daemons'
+require 'listen'
 
 # Sends alert message based on ALERT configured in confFile
 def alertMessage(message)
@@ -86,11 +86,11 @@ def main
 	end
 
 	# Check if the backup server is available
-	ssh = SSHTest.new
-	if ssh.test(@backupServer,@username,@sshKey) == false
-		alertMessage( "ERROR : ssh failed")
-		Process.exit
-	else
+#	ssh = SSHTest.new
+#	if ssh.test(@backupServer,@username,@sshKey) == false
+#		alertMessage( "ERROR : ssh failed")
+#		Process.exit
+#	else
 	  # Check for run file. The run file get's used to
 	  # stop MacBak from starting if another instance is
  	 # still running
@@ -101,23 +101,25 @@ def main
 		else
 			# Create a new file and continue running
 			File.open(@runFile,"w") {}
-	end
+#	end
 
-		# Everything tested 100% do the backups now
- 	 syncNow
+	 # Everything tested 100% let's start watching the
+	 # directories we want to backup
+	 Listen.to('/tmp/macbak') do |modified, added, removed|
+	 	 	 puts "#{modified} : #{added} : #{removed}"
+  	 #syncNow
+	 end
  	 # remove the run file now, so that MacBak will
  	 # run on the next execute.
 		File.delete(@runFile) 
 	end	
 end
 
-def daemonMe
-	`data >> /tmp/test.out`
-end
-
 # Start of main program
 #main
-Daemons.daemonize
-loop {
-	daemonMe
-}
+#
+# Look into using Looper or daemon-kit rather
+##Daemons.daemonize
+loop do
+	main
+end
