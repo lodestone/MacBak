@@ -22,11 +22,6 @@ def syncNow(directory)
 	  	'progress' => true
     	)
 			backup.rsync(directory,@backupPath)
-			# If alert is email, a mail goes out for every
-			# directory getting backed up. Might be too much
-			# spam. Move this alertMessage out of the syncNow 
-			# function?
-			#@message.alert("#{directory} backup done")
 end
 
 # Watch the backup dirs for changes
@@ -37,9 +32,10 @@ def watchDirs
 		  puts "Watching #{dir}"
       Listen.to(dir) do |modified, added, removed|
       #  syncNow(dir)
-      @message.alert("#{dir}")
+      @message.alert(@alert,"#{dir}")
   	  end
     }
+    `echo #{pid} >> /tmp/macback.pid`
     Process.detach(pid)
 	end
 end
@@ -62,23 +58,6 @@ end
         # alert message object
 	      @message = AlertMessage.new
 
-
-				# Handle "size" command line argument.
-				# Passing size gives the size of your dirs you
-				# want to backup back and then exit
-   	   if ARGV[0] == 'size'
-   	  	 	puts "Calculating..."
- 		     	@backupList.each do |dir|
-      		# Security issue? It's possible to make one of
-      		# the dirs in BACKUP_LIST in the conf file
-      		# a command like "; rm -Rf /" and that will get parsed
-      		# into the dir varible here.
-      		dirSize = `du -hs #{dir}`
-					puts "#{dirSize}"
-				end  
-				puts "done"
-	     	Process.exit
-      end
 	else
 		puts "ERROR : #{@confFile} was not found."
 		Process.exit
@@ -93,37 +72,14 @@ end
 			Process.exit
 		end
 	end
-	
-	
-
 
 	# Check if the backup server is available
-##	ssh = SSHTest.new
-##	if ssh.test(@backupServer,@username,@sshKey) == false
-##		@message.alert( "ERROR : ssh failed")
-##		Process.exit
-##	else
-	  # Check for run file. The run file get's used to
-	  # stop MacBak from starting if another instance is
- 	 # still running
- 	 @runFile = '/tmp/.macbak.run'
- 	 if File.exist?(@runFile)
- 	   puts "Another instance of MacBak is already running"
-			Process.exit
-		else
-			# Create a new file and continue running
-			File.open(@runFile,"w") {}
-	end
+	ssh = SSHTest.new
+	if ssh.test(@backupServer,@username,@sshKey) == false
+		@message.alert(@alert,"ERROR : ssh failed")
+		Process.exit
+  end
 
 	 # Everything tested 100% let's start watching the
 	 # directories we want to backup
-	 # Look into using Looper or daemon-kit rather
-   ##Daemons.daemonize
 	 	 watchDirs
- 	 # remove the run file now, so that MacBak will
- 	 # run on the next execute.
- 	 # BUG : we will never get here, so the file will
-	 # never ge removed.
-		File.delete(@runFile) 
-##	end	
-
