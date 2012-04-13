@@ -4,68 +4,51 @@
 # v0.0.1
 
 require 'yaml'
-require 'ruby-growl'
 require 'ssh_test'
 require 'rsync_wrap'
-require 'pony'
+require './lib/alert_message.rb'
 require 'find'
 require 'listen'
-
-# Sends alert message based on ALERT configured in confFile
-def alertMessage(message)
-	case @alert
-		when "growl"
-    	g = Growl.new "localhost", "ruby-growl", ["ruby-growl Notification"]
-    	g.notify "ruby-growl Notification", "MacBak",
-    		         "#{message}"
-		when "email"
-      Pony.mail(:to => @emailAddress,
-      					:from => 'macbak@yourmacorpc.fake',
-      					:subject => 'MacBak',
-      					:body => "#{message} \n")	
-		when "off"
-			puts "OFF: #{message}"
-	end
-end
-
 
 # Does the rsync work
 def syncNow(directory)
 	puts "syncNow #{directory}"
-	#@backupList.each do |directory|
-##    backup = RsyncWrap.new(
-##	  	'transport' => 'ssh',
-##	  	'backup' => @backupType,
-##	  	'username' => @username,
-##	  	'keyfile' => @sshKey, 
-##	  	'server' => @backupServer,
-##	  	'progress' => true
-##    	)
-##			backup.rsync(directory,@backupPath)
+    backup = RsyncWrap.new(
+	  	'transport' => 'ssh',
+   	  'backup' => @backupType,
+	  	'username' => @username,
+	  	'keyfile' => @sshKey, 
+	  	'server' => @backupServer,
+	  	'progress' => true
+    	)
+			backup.rsync(directory,@backupPath)
 			# If alert is email, a mail goes out for every
 			# directory getting backed up. Might be too much
 			# spam. Move this alertMessage out of the syncNow 
 			# function?
-##			alertMessage("#{directory} backup done")
-	# end	
+			#@message.alert("#{directory} backup done")
 end
 
 # Watch the backup dirs for changes
 def watchDirs
 	@backupList.each do |dir|
 		# Fork the below code to stop blocking
-		puts "Watching #{dir}"
-    Listen.to(dir) do |modified, added, removed|
-    syncNow(dir)
-  	end
+		pid = fork {
+		  puts "Watching #{dir}"
+      Listen.to(dir) do |modified, added, removed|
+      #  syncNow(dir)
+      @message.alert("#{dir}")
+  	  end
+    }
+    Process.detach(pid)
 	end
 end
 
-# Main worker function
-def main
+# Main
+
 	# Check for configuration file
 	@confFile = File.dirname(File.expand_path(__FILE__)) + '/macbak.cnf'
-		if File.exist?("#{@confFile}")
+		if File.exist?(@confFile)
 			config = YAML::load(File.open(@confFile))
 				@backupServer = config['BACKUP_SERVER']
 				@username = config['USERNAME']
@@ -75,6 +58,10 @@ def main
 				@emailAddress = config['EMAIL_ADDRESS']
 				@backupPath = config['BACKUP_PATH']
 				@backupList = config['BACKUP_LIST']
+
+        # alert message object
+	      @message = AlertMessage.new
+
 
 				# Handle "size" command line argument.
 				# Passing size gives the size of your dirs you
@@ -97,12 +84,25 @@ def main
 		Process.exit
 	end
 
+  # Check if backup directories actually exist.
+  @backupList.each do |dir|
+  	if File.exist?(dir)
+  	 puts "found #{dir}"	
+		else
+			@message.alert(@alert,"Cannot find #{dir} exiting...")
+			Process.exit
+		end
+	end
+	
+	
+
+
 	# Check if the backup server is available
-#	ssh = SSHTest.new
-#	if ssh.test(@backupServer,@username,@sshKey) == false
-#		alertMessage( "ERROR : ssh failed")
-#		Process.exit
-#	else
+##	ssh = SSHTest.new
+##	if ssh.test(@backupServer,@username,@sshKey) == false
+##		@message.alert( "ERROR : ssh failed")
+##		Process.exit
+##	else
 	  # Check for run file. The run file get's used to
 	  # stop MacBak from starting if another instance is
  	 # still running
@@ -113,7 +113,7 @@ def main
 		else
 			# Create a new file and continue running
 			File.open(@runFile,"w") {}
-#	end
+	end
 
 	 # Everything tested 100% let's start watching the
 	 # directories we want to backup
@@ -122,9 +122,8 @@ def main
 	 	 watchDirs
  	 # remove the run file now, so that MacBak will
  	 # run on the next execute.
+ 	 # BUG : we will never get here, so the file will
+	 # never ge removed.
 		File.delete(@runFile) 
-	end	
-end
+##	end	
 
-# Start of main program
-	main
