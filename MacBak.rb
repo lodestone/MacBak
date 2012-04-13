@@ -30,23 +30,35 @@ end
 
 
 # Does the rsync work
-def syncNow
-	@backupList.each do |directory|
-    backup = RsyncWrap.new(
-	  	'transport' => 'ssh',
-	  	'backup' => @backupType,
-	  	'username' => @username,
-	  	'keyfile' => @sshKey, 
-	  	'server' => @backupServer,
-	  	'progress' => true
-    	)
-			backup.rsync(directory,@backupPath)
+def syncNow(directory)
+	puts "syncNow #{directory}"
+	#@backupList.each do |directory|
+##    backup = RsyncWrap.new(
+##	  	'transport' => 'ssh',
+##	  	'backup' => @backupType,
+##	  	'username' => @username,
+##	  	'keyfile' => @sshKey, 
+##	  	'server' => @backupServer,
+##	  	'progress' => true
+##    	)
+##			backup.rsync(directory,@backupPath)
 			# If alert is email, a mail goes out for every
 			# directory getting backed up. Might be too much
 			# spam. Move this alertMessage out of the syncNow 
 			# function?
-			alertMessage("#{directory} backup done")
-	 end	
+##			alertMessage("#{directory} backup done")
+	# end	
+end
+
+# Watch the backup dirs for changes
+def watchDirs
+	@backupList.each do |dir|
+		# Fork the below code to stop blocking
+		puts "Watching #{dir}"
+    Listen.to(dir) do |modified, added, removed|
+    syncNow(dir)
+  	end
+	end
 end
 
 # Main worker function
@@ -105,10 +117,9 @@ def main
 
 	 # Everything tested 100% let's start watching the
 	 # directories we want to backup
-	 Listen.to('/tmp/macbak') do |modified, added, removed|
-	 	 	 puts "#{modified} : #{added} : #{removed}"
-  	 #syncNow
-	 end
+	 # Look into using Looper or daemon-kit rather
+   ##Daemons.daemonize
+	 	 watchDirs
  	 # remove the run file now, so that MacBak will
  	 # run on the next execute.
 		File.delete(@runFile) 
@@ -116,10 +127,4 @@ def main
 end
 
 # Start of main program
-#main
-#
-# Look into using Looper or daemon-kit rather
-##Daemons.daemonize
-loop do
 	main
-end
