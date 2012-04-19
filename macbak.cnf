@@ -1,5 +1,8 @@
 ### Config file for MacBak
 
+# TODO : Add functionality here for local or 127.0.0.1
+# in which case it will do a backup to the BACKUP_PATH on your
+# local machine...say to a external drive.
 # Server where your backups are going to
 BACKUP_SERVER: 10.0.0.15
 
@@ -44,7 +47,7 @@ EMAIL_ADDRESS: wernerg@afrigis.co.za
 #  email - send a email out to the addressed specified in EMAIL_ADDRESS
 #          after backup.  
 #  off - no messages get's send.
-ALERT: growl 
+ALERT: off 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
