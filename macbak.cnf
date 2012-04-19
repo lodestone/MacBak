@@ -47,14 +47,12 @@ EMAIL_ADDRESS: wernerg@afrigis.co.za
 #  email - send a email out to the addressed specified in EMAIL_ADDRESS
 #          after backup.  
 #  off - no messages get's send.
-ALERT: growl 
+ALERT: off 
 
 # List of local directories that you want to backup.
 # Add a entry like the example one.
 BACKUP_LIST:
-- /tmp/macbak
-- /tmp/macbak2
-#- /Users/wernergillmer/Documents
-#- /Users/wernergillmer/Code
-#- /Users/wernergillmer/Pictures
+- /Users/wernergillmer/Documents
+- /Users/wernergillmer/Code
+- /Users/wernergillmer/Pictures
 

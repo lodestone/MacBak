@@ -9,6 +9,7 @@ require 'rsync_wrap'
 require './lib/alert_message.rb'
 require 'find'
 require 'listen'
+require 'daemons'
 
 # Does the rsync work
 def syncNow(directory)
@@ -31,8 +32,8 @@ def watchDirs
 		pid = fork {
 		  puts "Watching #{dir}"
       Listen.to(dir) do |modified, added, removed|
-      #  syncNow(dir)
-      @message.alert(@alert,"#{dir}")
+        syncNow(dir)
+      #@message.alert(@alert,"#{dir}")
   	  end
     }
     `echo #{pid} >> /tmp/macback.pid`
@@ -82,4 +83,5 @@ end
 
 	 # Everything tested 100% let's start watching the
 	 # directories we want to backup
+	   Daemons.daemonize
 	 	 watchDirs
