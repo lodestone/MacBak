@@ -28,17 +28,17 @@ end
 # Watch the backup dirs for changes
 def watchDirs
 	@backupList.each do |dir|
-		# Fork the below code to stop blocking
-		pid = fork {
+	  pid = fork do 
 		  puts "Watching #{dir}"
       Listen.to(dir) do |modified, added, removed|
-        syncNow(dir)
+          syncNow(dir)
       #@message.alert(@alert,"#{dir}")
+      	`echo "\`date +%H:%M:%S\` :: #{dir}" >> /tmp/macbak.log`
   	  end
-    }
-    `echo #{pid} >> /tmp/macback.pid`
+		end 
+  #  `echo #{pid} >> /tmp/macbak.pid`
     Process.detach(pid)
-	end
+  end 
 end
 
 # Main
