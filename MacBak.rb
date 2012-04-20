@@ -27,6 +27,7 @@ end
 
 # Watch the backup dirs for changes
 def watchDirs
+  Daemons.daemonize
 	@backupList.each do |dir|
 	  pid = fork do 
 		  puts "Watching #{dir}"
@@ -83,5 +84,4 @@ end
 
 	 # Everything tested 100% let's start watching the
 	 # directories we want to backup
-	   Daemons.daemonize
 	 	 watchDirs
