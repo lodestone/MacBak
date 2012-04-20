@@ -20,7 +20,7 @@ def syncNow(directory)
 	  	'username' => @username,
 	  	'keyfile' => @sshKey, 
 	  	'server' => @backupServer,
-	  	'progress' => true
+	  	'logging' => true  # Set this to true for debugging. Logs to /tmp/rsyncwrap.log
     	)
 			backup.rsync(directory,@backupPath)
 end
@@ -31,13 +31,11 @@ def watchDirs
 	@backupList.each do |dir|
 	  pid = fork do 
 		  puts "Watching #{dir}"
-      Listen.to(dir) do |modified, added, removed|
+     Listen.to(dir) do |modified, added, removed|
           syncNow(dir)
       #@message.alert(@alert,"#{dir}")
-      	`echo "\`date +%H:%M:%S\` :: #{dir}" >> /tmp/macbak.log`
   	  end
 		end 
-  #  `echo #{pid} >> /tmp/macbak.pid`
     Process.detach(pid)
   end 
 end
