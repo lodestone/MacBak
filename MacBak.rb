@@ -20,6 +20,7 @@ def syncNow(directory)
 	  	'username' => @username,
 	  	'keyfile' => @sshKey, 
 	  	'server' => @backupServer,
+	  	'compress' => true,
 	  	'logging' => true  # Set this to true for debugging. Logs to /tmp/rsyncwrap.log
     	)
 			backup.rsync(directory,@backupPath)
@@ -31,9 +32,9 @@ def watchDirs
 	@backupList.each do |dir|
 	  pid = fork do 
 		  puts "Watching #{dir}"
-     Listen.to(dir) do |modified, added, removed|
+      Listen.to(dir) do |modified, added, removed|
           syncNow(dir)
-      #@message.alert(@alert,"#{dir}")
+     ### #@message.alert(@alert,"#{dir}")
   	  end
 		end 
     Process.detach(pid)
