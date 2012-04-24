@@ -27,18 +27,22 @@ def syncNow(directory)
 end
 
 # Watch the backup dirs for changes
+# startup = true or false, if true it forces a 
+# sync without checking if something changed.
 def watchDirs
-  Daemons.daemonize
+    Daemons.daemonize
+
 	@backupList.each do |dir|
+		puts "Watching #{dir}"
 	  pid = fork do 
-		  puts "Watching #{dir}"
-      Listen.to(dir) do |modified, added, removed|
-          syncNow(dir)
+        Listen.to(dir) do |modified, added, removed|
+         syncNow(dir)
+				end
+	 			syncNow(dir)
+			end
      ### #@message.alert(@alert,"#{dir}")
   	  end
-		end 
     Process.detach(pid)
-  end 
 end
 
 # Main
@@ -81,6 +85,7 @@ end
 		Process.exit
   end
 
-	 # Everything tested 100% let's start watching the
-	 # directories we want to backup
+	 # Everything tested 100% let's start a initial sync
+ 	 # and then start watching the dirs
 	 	 watchDirs
+	 	 

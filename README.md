@@ -17,7 +17,10 @@ Open up macback.cnf and edit the file according to your needs.
 
 NOTE : Apart from the alerts, it should work perfectly on Linux as well,
 alerting will work if it's not set to growl. Infact I use MacBak to keep certain
-directories on Ubuntu Linux servers in sync with the clone function.
+directories on Ubuntu Linux servers in sync with the clone function. If you do 
+run this one Linux add the following line to your /etc/sysctl.conf file
+
+    fs.inotify.max_user_watches=100000
 
 ### Requirements
 
