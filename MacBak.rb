@@ -68,6 +68,14 @@ end
 		Process.exit
 	end
 
+  # Force a sync on the specified directory
+   if ARGV[0] == "--force"
+   	 puts "Forcing sync on #{ARGV[1]}"
+     syncNow(ARGV[1])
+     Process.exit
+	 end
+
+
   # Check if backup directories actually exist.
   @backupList.each do |dir|
   	if File.exist?(dir)
@@ -84,7 +92,8 @@ end
 		@message.alert(@alert,"ERROR : ssh failed")
 		Process.exit
   end
-
+   
+   
 	 # Everything tested 100% let's start a initial sync
  	 # and then start watching the dirs
 	 	 watchDirs
